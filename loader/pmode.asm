@@ -36,7 +36,8 @@ pmode_start:
     ;;mov esp, 0x90000
     mov esp, 0x9FC00
 
-    call loader_main
+    ;; call loader_main
+    jmp 0x1000b0
 
 ;;    jmp $
 

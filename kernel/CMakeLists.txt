@@ -11,8 +11,10 @@ add_executable(kernel.elf ${SRC})
 
 set_target_properties(kernel.elf PROPERTIES
     #LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -m elf_i386"
-    LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld"
+    LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -Wl,-m,elf_i386"
 )
+
+target_link_libraries(kernel.elf hal)
 
 
 

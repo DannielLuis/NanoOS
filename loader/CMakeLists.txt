@@ -19,7 +19,7 @@ add_executable(loader.elf ${SRC})
 
 set_target_properties(loader.elf PROPERTIES
    # LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -m elf_i386"
-    LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld"
+    LINK_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/linker.ld -Wl,-m,elf_i386"
 )
 
 

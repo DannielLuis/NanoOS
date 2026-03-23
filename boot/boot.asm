@@ -15,19 +15,20 @@ start:
 
 ; salvar drive
     mov [BOOT_DRIVE], dl
+    mov [0x7DFE], dl
 
 ; print msg
     mov si, msg
     call print
 
-; carregar stage2 (apenas 1 setor)
+; carregar stage2 (apenas 10 setores por enquanto)
     mov ax, 0x0800   ; segmento destino
     mov es, ax
     xor bx, bx       ; offset 0x0000
     mov ah, 0x02     ; função ler setor
-    mov al, 1        ; número de setores = 1
+    mov al, 10        ; número de setores = 10
     mov ch, 0        ; cilindro 0
-    mov cl, 2        ; setor 2
+    mov cl, 2        ; setor 2 (setor 1 é boot, 2 é loader)
     mov dh, 0        ; cabeça 0
     mov dl, [BOOT_DRIVE]
     int 0x13

@@ -16,6 +16,19 @@ section .text
 
 start:
 
+    ; carregar kernel para 0x100000
+    mov ax, 0x1000
+    mov es, ax
+    xor bx, bx
+    mov ah, 0x02
+    mov al, 1        ; 1 setor
+    mov ch, 0        ; cilindro
+    mov cl, 21       ; setor 21
+    mov dh, 0        ; cabeça
+    mov dl, [0x7DFE]        ; drive floppy
+    int 0x13
+    jc hang
+
     cli
 
     call enable_a20
