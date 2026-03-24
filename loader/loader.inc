@@ -1,0 +1,10 @@
+[bits 16]
+
+%include "loader/a20.asm"
+%include "loader/gdt.asm"
+
+%include "loader/disk.asm"
+
+%include "loader/pmode.asm"
+;%include "disk.asm"
+;%include "memory.asm"

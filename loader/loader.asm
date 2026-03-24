@@ -82,4 +82,4 @@ msg3 db " PMODE",0
 loader_msg db "NanoOS loader",0
 msg_loaded db " kernel loaded",0
 
-%include "loader.inc"
+%include "loader/loader.inc"

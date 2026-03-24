@@ -7,7 +7,7 @@ echo "===== NanoOS build ====="
 IMG=boot.img
 
 BOOT=boot.asm
-LOADER=loader.asm
+LOADER=loader/loader.asm
 KERNEL=kernel.asm
 
 BOOT_BIN=boot.bin
