@@ -36,8 +36,8 @@ pmode_start:
     ;;mov esp, 0x90000
     mov esp, 0x9FC00
 
-    ;; call loader_main
-    jmp 0x1000b0
+    ;; pular para kernel em 0x100b0 (load para 0x10000 no real mode)
+    jmp 0x100b0
 
 ;;    jmp $
 

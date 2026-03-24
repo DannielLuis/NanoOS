@@ -21,21 +21,27 @@ start:
     mov si, msg
     call print
 
-; carregar stage2 (apenas 10 setores por enquanto)
-    mov ax, 0x0800   ; segmento destino
+; carregar stage2 (1 setor, loader ocupa 1 setor no momento)
+    mov ax, 0x0800   ; segmento destino (0x8000)
     mov es, ax
     xor bx, bx       ; offset 0x0000
     mov ah, 0x02     ; função ler setor
-    mov al, 10        ; número de setores = 10
+    mov al, 1        ; número de setores = 1
     mov ch, 0        ; cilindro 0
-    mov cl, 2        ; setor 2 (setor 1 é boot, 2 é loader)
+    mov cl, 2        ; setor 2 (boot=1, loader=2)
     mov dh, 0        ; cabeça 0
     mov dl, [BOOT_DRIVE]
     int 0x13
     jc disk_error
 
+; sinal visual de sucesso: já leu stage2, antes de saltar
+    mov si, stage2_ok_msg
+    call print
+
 ; pular para stage2
     jmp 0x0800:0x0000
+
+stage2_ok_msg db "stage2 loaded...\r\n",0
 
 ; =========================
 print:

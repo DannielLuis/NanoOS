@@ -2,10 +2,11 @@ ENTRY(start)
 
 SECTIONS
 {
-    . = 0x8000;
+    . = 0x0000;
 
     .text :
     {
+        *(.text.start)
         *(.text*)
     }
 

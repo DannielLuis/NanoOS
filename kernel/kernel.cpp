@@ -15,11 +15,26 @@ void print(const char* s)
         putc(*s++);
 }
 
+static inline void outb(uint16_t port, uint8_t val)
+{
+    asm volatile("outb %0, %1" : : "a"(val), "Nd"(port));
+}
+
+void serial_putc(char c)
+{
+    outb(0x3F8, c);
+}
+
+void serial_print(const char* s)
+{
+    while (*s)
+        serial_putc(*s++);
+}
+
 extern "C"
 void kernel_main()
 {
-    print("NanoOS kernel");
-
+    // Base funcional: apenas halt
     while (1)
     {
         asm("hlt");
