@@ -1,5 +1,6 @@
 [bits 16]
 
+%include "loader/memory.asm"
 %include "loader/a20.asm"
 %include "loader/gdt.asm"
 

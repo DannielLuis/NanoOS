@@ -39,6 +39,8 @@ start:
     mov si,msg_loaded
     call print
 
+    call detect_memory
+
     mov si, msg0
     call print
 
@@ -88,7 +90,9 @@ print:
     ret
 
 
+;msg0 db " loader memory map",0
 msg0 db " loader",0
+
 msg1 db " A20",0
 msg2 db " GDT",0
 msg3 db " PMODE",0
