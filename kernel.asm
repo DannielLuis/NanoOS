@@ -62,6 +62,10 @@ done:
     mov ah, 0x07
     mov [edi+4], ax
 
+    call pmm_init
 
 hang:
     jmp hang
+
+
+%include "pmm.asm"
