@@ -10,7 +10,7 @@
 
 [bits 16]
 
-KERNEL_SECTOR equ 6   ; <<< AJUSTE MANUAL POR ENQUANTO
+;;KERNEL_SECTOR equ 6   ; <<< AJUSTE MANUAL POR ENQUANTO
 ;;KERNEL_SECTOR equ 3   ; <<< AJUSTE MANUAL POR ENQUANTO
 
 load_kernel:
@@ -41,10 +41,14 @@ load_kernel:
 
     mov ch,0           ; cilindro
     ;;mov cl,3           ; setor inicial
-    mov cl, KERNEL_SECTOR
+    ;;mov cl, KERNEL_SECTOR
+    mov cl, [KERNEL_SECTOR]
+
 
     mov dh,0           ; cabeça
-    mov dl,0x00        ; drive (floppy)
+    mov dl, [BOOT_DRIVE]
+
+    ;;mov dl,0x00        ; drive (floppy)
 
     int 0x13
 

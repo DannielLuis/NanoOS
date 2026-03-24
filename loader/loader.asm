@@ -8,9 +8,22 @@ jmp start
 
 ;;jmp start
 
+   ; mov al, [0x7E00]
+  ;  mov [BOOT_DRIVE], al
+
+  ;  mov al, [0x7E01]
+  ;  mov [KERNEL_SECTOR], al
+
 start:
 
     cli
+
+    mov al, [0x7E00]
+    mov [BOOT_DRIVE], al
+
+    mov al, [0x7E01]
+    mov [KERNEL_SECTOR], al
+
     
     mov ah,0x0E
     mov al,'L'
@@ -81,5 +94,9 @@ msg2 db " GDT",0
 msg3 db " PMODE",0
 loader_msg db "NanoOS loader",0
 msg_loaded db " kernel loaded",0
+
+KERNEL_SECTOR db 0
+BOOT_DRIVE   db 0
+
 
 %include "loader/loader.inc"
