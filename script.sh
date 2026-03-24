@@ -8,9 +8,11 @@ IMG=boot.img
 
 BOOT=boot.asm
 LOADER=loader.asm
+KERNEL=kernel.asm
 
 BOOT_BIN=boot.bin
 LOADER_BIN=loader.bin
+KERNEL_BIN=kernel.bin
 
 
 echo "[1] Limpando..."
@@ -33,12 +35,25 @@ echo "[5] Compilando loader..."
 nasm -f bin $LOADER -o $LOADER_BIN
 
 
-echo "[6] Tamanho loader:"
-ls -l $LOADER_BIN
+echo "[6] Compilando kernel..."
+nasm -f bin $KERNEL -o $KERNEL_BIN
 
 
-echo "[7] Gravando loader..."
+echo "[7] Calculando setores loader..."
+LOADER_SIZE=$(stat -c%s "$LOADER_BIN")
+LOADER_SECTORS=$(( ($LOADER_SIZE + 511) / 512 ))
+
+echo "Loader sectors = $LOADER_SECTORS"
+
+
+echo "[8] Gravando loader..."
 dd if=$LOADER_BIN of=$IMG bs=512 seek=1 conv=notrunc
+
+
+KERNEL_OFFSET=$((1 + LOADER_SECTORS))
+
+echo "[9] Gravando kernel no setor $KERNEL_OFFSET"
+dd if=$KERNEL_BIN of=$IMG bs=512 seek=$KERNEL_OFFSET conv=notrunc
 
 
 echo "===== BUILD OK ====="

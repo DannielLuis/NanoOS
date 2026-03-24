@@ -1,3 +1,5 @@
 .codeeditor
 build/
 sandbox/
+*.bin
+*.img
