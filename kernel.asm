@@ -4,6 +4,8 @@
 
 kernel_start:
 
+    cli
+
     mov edi, 0xB8000
 
     mov eax, 0x0720074B

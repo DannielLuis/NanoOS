@@ -30,6 +30,8 @@ protected_mode_start:
 
   ;  call load_kernel
 
+    call load_idt
+
    ;; jmp 0x100000
    ;; jmp 0x10000
     jmp 0x08:0x10000

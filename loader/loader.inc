@@ -6,5 +6,8 @@
 %include "loader/disk.asm"
 
 %include "loader/pmode.asm"
+
+%include "loader/idt.asm"
+
 ;%include "disk.asm"
 ;%include "memory.asm"

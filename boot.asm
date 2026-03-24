@@ -29,7 +29,7 @@ start:
     mov es, ax          ; <<< IMPORTANTE
 
     mov bx, 0x8000      ; destino
-    mov dh, 3           ; setores para ler
+    mov dh, 5           ; setores para ler
    ;; mov dh, 10           ; setores para ler
    ;; mov dh, 2           ; setores para ler
 
@@ -91,8 +91,9 @@ disk_load:
     mov bx, 0x8000
 
     mov ah, 0x02
-    ;;mov al, dh
-    mov al, 1
+   ;; mov al, dh
+   ;; mov al, 1
+    mov al, 5
 
     mov ch, 0
     mov cl, 2
