@@ -1,70 +1,62 @@
 [org 0x8000]
-;;[org 0]
 [bits 16]
 
-jmp start
+jmp start    ; pular para o início
 
-;;%include "loader.inc"
-
-;;jmp start
-
-   ; mov al, [0x7E00]
-  ;  mov [BOOT_DRIVE], al
-
-  ;  mov al, [0x7E01]
-  ;  mov [KERNEL_SECTOR], al
 
 start:
 
     cli
 
-    mov al, [0x7E00]
+    ; ===== carregar info do boot.asm =====
+    mov al, [0x7E00]       ; boot drive
     mov [BOOT_DRIVE], al
 
-    mov al, [0x7E01]
+    mov al, [0x7E01]       ; kernel sector
     mov [KERNEL_SECTOR], al
 
     
-    mov ah,0x0E
-    mov al,'L'
+    ; ===== print "L" =====
+    mov ah, 0x0E
+    mov al, 'L'
     int 0x10
 
+
+    ; ===== print loader_msg =====
     mov si, loader_msg
     call print
 
-   ; cli
-
+    ; ===== carregar kernel =====
     call load_kernel
-
-    mov si,msg_loaded
+    mov si, msg_loaded
     call print
 
+    ; ===== detectar memória =====
     call detect_memory
-
     mov si, msg0
     call print
 
+    ; ===== ativar A20 =====
     call enable_a20
-
     mov si, msg1
     call print
 
+    ; ===== carregar GDT =====
     call load_gdt
-
     mov si, msg2
     call print
 
+    ; ===== entrar em protected mode =====
     call enter_protected_mode
-
-   ;; mov si, msg3
-   ;; call print
+    ;; mov si, msg3
+    ;; call print
 
 hang:
     jmp hang
 
 
 ; =====================
-; print
+; rotina de print simples
 ; =====================
 
 print:
@@ -76,20 +68,13 @@ print:
     int 0x10
     jmp .loop
 
-;.next:
- ;   lodsb
- ;   or al, al
-  ;  jz .done
-
- ;   mov ah, 0x0E
-  ;  int 0x10
-
-  ;  jmp .next
-
 .done:
     ret
 
 
+; =====================
+; mensagens
+; =====================
 ;msg0 db " loader memory map",0
 msg0 db " loader",0
 
@@ -99,8 +84,13 @@ msg3 db " PMODE",0
 loader_msg db "NanoOS loader",0
 msg_loaded db " kernel loaded",0
 
+; =====================
+; variáveis passadas do boot
+; =====================
 KERNEL_SECTOR db 0
 BOOT_DRIVE   db 0
 
-
+; =====================
+; include das rotinas do loader
+; =====================
 %include "loader/loader.inc"

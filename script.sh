@@ -23,12 +23,12 @@ echo "[2] Criando imagem..."
 dd if=/dev/zero of=$IMG bs=512 count=2880
 
 
-echo "[3] Compilando boot..."
-nasm -f bin $BOOT -o $BOOT_BIN
+#echo "[3] Compilando boot..."
+#nasm -f bin $BOOT -o $BOOT_BIN
 
 
-echo "[4] Gravando boot..."
-dd if=$BOOT_BIN of=$IMG conv=notrunc
+#echo "[4] Gravando boot..."
+#dd if=$BOOT_BIN of=$IMG conv=notrunc
 
 
 echo "[5] Compilando loader..."
@@ -42,6 +42,23 @@ nasm -f bin $KERNEL -o $KERNEL_BIN
 echo "[7] Calculando setores loader..."
 LOADER_SIZE=$(stat -c%s "$LOADER_BIN")
 LOADER_SECTORS=$(( ($LOADER_SIZE + 511) / 512 ))
+
+KERNEL_OFFSET=$((1 + LOADER_SECTORS))
+
+echo "LOADER_SECTORS equ $LOADER_SECTORS" > boot_params.inc
+echo "KERNEL_SECTOR equ $KERNEL_OFFSET" >> boot_params.inc
+
+
+
+echo "[3] Compilando boot..."
+nasm -f bin $BOOT -o $BOOT_BIN
+
+
+echo "[4] Gravando boot..."
+dd if=$BOOT_BIN of=$IMG conv=notrunc
+
+
+
 
 echo "Loader sectors = $LOADER_SECTORS"
 
