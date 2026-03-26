@@ -6,6 +6,8 @@
 
 %include "loader/disk.asm"
 
+%INCLUDE "loader/screen.asm"
+
 %include "loader/pmode.asm"
 
 %include "loader/idt.asm"
