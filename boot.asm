@@ -92,7 +92,45 @@ disk_load:
     pop ax
 
     ret
+    
+    
+;disk_load:
 
+  ;  pusha
+
+  ;  mov si, 0          ; contador
+ ;   mov di, bx         ; offset destino (0x8000)
+
+;.read_loop:
+
+ ;   cmp si, LOADER_SECTORS
+  ;  je .done
+
+    ; calcular LBA (loader começa no setor 1)
+ ;   mov ax, 1
+ ;   add ax, si
+
+ ;   call lba_to_chs
+
+ ;   mov ah, 0x02
+ ;   mov al, 1
+ ;   mov dl, [BOOT_DRIVE]
+
+ ;   mov bx, di
+
+ ;   int 0x13
+ ;   jc disk_error
+
+    ; próximo setor
+ ;   add di, 512
+ ;   inc si
+
+  ;  jmp .read_loop
+
+;.done:
+ ;   popa
+ ;   ret
+    
 
 disk_error:
 
@@ -102,7 +140,30 @@ disk_error:
     jmp $
 
 
+;SECTORS_PER_TRACK equ 18
+;HEADS equ 2
 
+;lba_to_chs:
+
+ ;   xor dx, dx
+ ;   div word [sectors]
+
+ ;   mov cl, dl
+  ;  inc cl
+
+ ;   xor dx, dx
+ ;   div word [heads]
+
+  ;  mov dh, dl
+  ;  mov ch, al
+
+  ;  ret
+
+;sectors dw SECTORS_PER_TRACK
+;heads   dw HEADS
+    
+    
+    
 ; =========================
 ; print string
 ; =========================

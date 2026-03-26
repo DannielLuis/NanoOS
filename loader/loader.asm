@@ -8,11 +8,15 @@ start:
 
     cli
 
+    xor ax, ax
+    mov ds, ax
+    mov es, ax
+
     call header
 
     ; ===== carregar info do boot.asm =====
- ;   mov al, [0x7E00]       ; boot drive
- ;   mov [BOOT_DRIVE], al
+    mov al, [0x7E00]       ; boot drive
+    mov [BOOT_DRIVE], al
 
  ;   mov al, [0x7E01]       ; kernel sector
  ;   mov [KERNEL_SECTOR], al
@@ -44,10 +48,42 @@ start:
     ; a mensagem log que sera mostrada, mas por enquanto ficara
     ; assim do jeito que esta.
   ;  call load_kernel
-    mov si, msg_loaded
-    call print
+    ;mov si, msg_loaded
+    ;call print
 
-    call newline
+    ;call newline
+
+  ;  mov si, msg_loading
+  ;  call print
+
+  ;  call load_kernel
+ ;   jc .kernel_fail
+
+ ;   mov si, msg_ok
+ ;   call print
+ ;   jmp .kernel_done
+
+;.kernel_fail:
+  ;  mov si, msg_fail
+ ;   call print
+
+;.kernel_done:
+  ;  call newline
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
 
     ; ===== detectar memória =====
   ;  call detect_memory
@@ -78,23 +114,53 @@ start:
     
     
 
+    
+    
+    ; ===== carregar kernel =====
+    ;mov si, msg_loading
+    ;call print
+
+    call load_kernel
+    jc .kernel_fail
+
+    mov si, msg_ok
+    call print
+    jmp .kernel_done
+
+.kernel_fail:
+    mov si, msg_fail
+    call print
+
+.kernel_done:
+    call newline
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
 
     ; ===== ativar A20 =====
-  ;  call enable_a20
+    call enable_a20
     mov si, msg_a20     ;msg1
     call print
 
     call newline
 
     ; ===== carregar GDT =====
-  ;  call load_gdt
+    call load_gdt
     mov si, msg_gdt     ;msg2
     call print
 
     call newline
 
     ; ===== entrar em protected mode =====
-  ;  call enter_protected_mode
+    call enter_protected_mode
     ;; mov si, msg3
     ;; call print
 
@@ -181,6 +247,24 @@ msg3 db " PMODE",0
 msg_loaded db " kernel loaded",0
 
 
+msg_loading db "Loading KERNEL ... ",0
+;msg_ok      db "OK",0
+;msg_fail    db "FAIL",0
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 ; =====================
 ; variáveis passadas do boot
 ; =====================
