@@ -1,36 +1,6 @@
-;[bits 32]
-;[bits 16]
-
-;load_kernel:
-
-    ; aqui vamos só simular por enquanto
-    ; int13 aqui
-
- ;   ret
-
 [bits 16]
 
-;;KERNEL_SECTOR equ 6   ; <<< AJUSTE MANUAL POR ENQUANTO
-;;KERNEL_SECTOR equ 3   ; <<< AJUSTE MANUAL POR ENQUANTO
-
 load_kernel:
-
-  ;  mov bx, 0x0000
- ;   mov es, bx
-
-   ; mov bx, 0x0000
-
-  ;  mov ax, 0x1000
-  ;  mov es, ax
-  ;  xor bx, bx
-
-  ;  mov ah, 0x02
-  ;  mov al, 20
-
-  ;  mov ch, 0
-  ;  mov cl, 2
- ;   mov dh, 0
-  ;  mov dl, 0x80
 
     mov ax,0x1000
     mov es,ax
@@ -59,3 +29,39 @@ load_kernel:
 disk_error:
     jmp $
 
+
+    
+    
+    
+
+;[bits 32]
+;[bits 16]
+
+;load_kernel:
+
+    ; aqui vamos só simular por enquanto
+    ; int13 aqui
+
+ ;   ret
+
+    ;;KERNEL_SECTOR equ 6   ; <<< AJUSTE MANUAL POR ENQUANTO
+;;KERNEL_SECTOR equ 3   ; <<< AJUSTE MANUAL POR ENQUANTO
+    
+;load_kernel:
+
+  ;  mov bx, 0x0000
+ ;   mov es, bx
+
+   ; mov bx, 0x0000
+
+  ;  mov ax, 0x1000
+  ;  mov es, ax
+  ;  xor bx, bx
+
+  ;  mov ah, 0x02
+  ;  mov al, 20
+
+  ;  mov ch, 0
+  ;  mov cl, 2
+ ;   mov dh, 0
+  ;  mov dl, 0x80
