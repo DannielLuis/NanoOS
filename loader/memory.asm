@@ -24,19 +24,47 @@ detect_memory:
 
     int 0x15
 
-    jc .done
+
+
+    jc .error              ; BIOS falhou
 
     cmp eax, 0x534D4150
-    jne .done
+    jne .error             ; assinatura inválida
 
     add di, 20
-
     inc byte [MEMORY_MAP_COUNT]
 
     cmp ebx, 0
-    jne .next
+    jne .next              ; continua loop
 
-.done:
+    ; terminou normalmente
+    cmp byte [MEMORY_MAP_COUNT], 0
+    je .error              ; nenhuma entrada = erro
 
+
+   ; jc .done
+
+ ;   cmp eax, 0x534D4150
+  ;  jne .done
+
+  ;  add di, 20
+
+  ;  inc byte [MEMORY_MAP_COUNT]
+
+  ;  cmp ebx, 0
+  ;  jne .next
+
+.success:
     popa
+    clc                    ; sucesso
     ret
+
+.error:
+    popa
+    stc                    ; erro
+    ret
+
+;.done:
+
+ ;   popa
+ ;   ret

@@ -50,11 +50,33 @@ start:
     call newline
 
     ; ===== detectar memória =====
-    call detect_memory
-    mov si, msg_memory  ;msg0
+  ;  call detect_memory
+  ;  mov si, msg_memory  ;msg0
+ ;   call print
+
+  ;  call newline
+
+
+    mov si, msg_memory
     call print
 
+    call detect_memory
+    jc .mem_fail
+
+    mov si, msg_ok
+    call print
+    jmp .mem_done
+
+
+.mem_fail:
+    mov si, msg_fail
+    call print
+
+.mem_done:
     call newline
+    
+    
+    
 
 
     ; ===== ativar A20 =====
@@ -112,7 +134,8 @@ header:
     ret
 
 
-
+ 
+    
 ; ================================
 ; STRINGS
 ; ================================
@@ -122,17 +145,29 @@ title db "NanoOS Loader v1.0 - Prototipo",0
 ;line  db "────────────────────────────────────────",0
 line db 40 dup(0xC4),0
 
-msg_ok db "OK",0
-msg_teste db " [ ] ",0
-msg_space db " ",0
  
  
+msg_ok    db "OK", 0
+msg_fail  db "FAIL", 0
+ 
+msg_teste db " [ ] ", 0
+msg_space db " ", 0
 
+;msg_memory db "Detecting Memory ... ",0
+
+
+; [ OK ]
+; [ FAIL ]
+; [ WARN ]
+
+ 
+ 
+ 
 ; =====================
 ; mensagens
 ; =====================
 loader_msg db " Iniciando NanoOS loader", 0
-msg_memory db " Memoria detectada", 0
+msg_memory db " Detectando Memoria ... ", 0
 msg_a20    db " A20 habilitada",0
 msg_gdt    db " GDT carregado",0
 
