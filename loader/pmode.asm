@@ -22,19 +22,89 @@ protected_mode_start:
     mov ss, ax
 
     mov esp, 0x90000
-  ;  mov ebp, esp
+    
+    jmp 0x08:0x10000
+    ;jmp $
 
-  ;  mov al,'P'
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+;protected_mode_start:
+
+ ;   mov ax, 0x10
+
+ ;   mov ds, ax
+ ;   mov es, ax
+ ;   mov fs, ax
+ ;   mov gs, ax
+  ;  mov ss, ax
+
+ ;   mov esp, 0x90000
+ ; ;  mov ebp, esp
+
+ ;   mov al,'P'
  ;   mov ah,0x0E
   ;  int 0x10   ; ← isso vai travar, mas queremos ver se chegou
 
   ;  call load_kernel
 
-    call load_idt
+   ; call load_idt
+    
+   ; mov dword [0xB8000], 0x0720074C   ; 'L'
+    
+  ;  mov eax, [0x10000]
+    
+  ;  mov dword [0x10000], 0x0720074B   ; 'K'
+    ;mov eax, [0x10000]
+    
+    
+    
+ ;   mov edi, 0xB8000
 
+  ;  mov eax, 0x0720074B
+  ;  mov [edi], eax
+    
    ;; jmp 0x100000
    ;; jmp 0x10000
-    jmp 0x08:0x10000
+    
+   ; mov esi, 0x10000
+   ; mov edi, 0xB8000
 
+   ; mov al, [esi]       ; primeiro byte do kernel
+   ; mov ah, 0x074
+   ; mov [edi], ax
+    
+    
+  ;  jmp 0x08:0x10000
+  ;  jmp $
+    
 ;hang:
    ; jmp hang
+    
+    
+    
+    
+    
