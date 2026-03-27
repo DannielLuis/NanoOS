@@ -14,16 +14,13 @@ kernel_start:
 
     cli
 
-;    mov edi, 0xB8000
-
+    ; =================================
+ ;   mov edi, 0xB8000
  ;   mov eax, 0x0720074B
  ;   mov [edi], eax
 
-
-
-
-
-   ; mov esi, 0x4FF0
+    ; =================================
+  ;  mov esi, 0x4FF0
   ;  mov al, [esi]
 
   ;  add al, 'h'
@@ -32,15 +29,13 @@ kernel_start:
    ; mov [edi+4], ax
 
 
-
-
+    ; =================================
     ;mov edi, 0xB8000
     ;mov eax, 0x07200758   ; 'X'
     ;mov [edi], eax
 
 
-
-
+    ; =================================
  ;   xor ecx, ecx
  ;   mov cl, [MEMORY_COUNT]
 
@@ -52,14 +47,58 @@ kernel_start:
     ;jmp $
 
 
-    
-    call clear_screen
-    call update_cursor
+    ; ================================
+    ; Tela de logs
+    ; ================================
+    call clear_screen     ; Limpa a tela
+    call update_cursor    ; atualiza o cursor
+
+    ; linha superior
+    mov dword [cursor_y], 0
+    call draw_line
+ ;;;;;;;   mov esi, line80
+ ;;;;;;;;   call print_string_pm
+
+
+   ; call newline_pm
+
+
+    ; título
+    mov esi, title
+    mov eax, 30    ;31    ;25        ; posição X (centralizado manual)
+    mov ebx, 1    ;0    linha
+    call print_at
+
+
+
+ ;   call newline_pm
+
+
+
+    ; linha inferior
+  ;  mov eax, 25        ; posição X (centralizado manual)
+ ;   mov ebx, 4    ;0    linha
+    mov dword [cursor_y], 2
+  ;  call set_cursor
+    call draw_line
+
+;;;;;;;    mov esi, line80
+;;;;;    call print_string_pm
+
+
+
+
+
+
+
+
+    call newline_pm
+    call newline_pm
+
 
     mov esi, msg1
     call print_string_pm
 
-    ;jmp $
 
     call newline_pm
 
@@ -67,14 +106,25 @@ kernel_start:
     mov esi, msg2
     call print_string_pm
 
+   ; call newline_pm
+
+
+    mov eax, 0        ; posição X
+    mov ebx, 10       ; posição Y
+  ;  mov dword [cursor_x], 0
+  ;  mov dword [cursor_y], 20
+    call set_cursor
+
+    call update_cursor
+
 .loop:
     hlt
     jmp .loop
 
 
 
-msg1 db "NanoOS Kernel iniciado", 0
-msg2 db "Sistema de logs OK", 0
+msg1   db " NanoOS Kernel iniciado" , 0
+msg2   db " Sistema de logs OK" , 0
 
 
 

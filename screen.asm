@@ -4,14 +4,23 @@
 ; ================================
 ; rotina de print simples
 ; ================================
+
+
+
+
+; ================================
+; Rotina para limpar a tela
+; ================================
 clear_screen:
     mov edi, 0xB8000
     mov ecx, 80*25
     mov eax, 0x07200720
+   ; mov ax, 0x0720
 
 .loop:
     mov [edi], eax
     add edi, 4
+   ; add edi, 2
     loop .loop
 
     mov dword [cursor_x], 0
@@ -113,7 +122,7 @@ print_string_pm:
     ret
 
 
-log_info:
+log_info_:
     push esi               ; salva mensagem
 
     mov esi, log_prefix
@@ -136,6 +145,10 @@ log_info:
 
 
 newline_pm:
+  ;  push esi               ; salva mensagem
+  ;  push eax
+  ;  push ebx
+
     mov dword [cursor_x], 0
     inc dword [cursor_y]
 
@@ -145,7 +158,66 @@ newline_pm:
 ;.ok:
 
     call update_cursor
+ ;   pop esi
+  ;  pop ebx
+  ;  pop eax
     ret
+
+
+
+
+
+
+
+draw_line:
+   ; mov edi, 0xB8000
+    ;mov ecx, 80
+   ; mov eax, 0x07202D    ; '-' cinza
+    
+    mov eax, [cursor_y]
+    imul eax, 80
+    shl eax, 1            ; *2 (cada char = 2 bytes)
+
+    add eax, 0xB8000
+    mov edi, eax
+
+    mov ecx, 80
+    ;mov ax, 0x072D        ; '-'
+    mov ax, 0x07C4         ; linha continua sem divisão
+    ;mov ax, line
+
+.loop:
+    mov [edi], ax
+    add edi, 2
+    loop .loop
+    ret
+    
+    
+set_cursor:
+    mov [cursor_x], eax
+    mov [cursor_y], ebx
+    ret
+    
+    
+print_at:
+
+    ; entrada:
+    ; ESI = string
+    ; EAX = x
+    ; EBX = y
+
+    push eax
+    push ebx
+
+    call set_cursor
+    call print_string_pm
+
+    pop ebx
+    pop eax
+    ret
+
+    
+
 
 
 
@@ -154,4 +226,7 @@ cursor_x dd 0
 cursor_y dd 0
 
 log_prefix db "[OK] ",0
+title db "NanoOS Kernel v1.0", 0
+;line db 40 dup(0xC4), 0
+;line80 db 80 dup(0xC4), 0
 
