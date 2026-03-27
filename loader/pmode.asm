@@ -23,6 +23,9 @@ protected_mode_start:
 
     mov esp, 0x90000
     
+    ;call load_idt
+    lidt [idt_descriptor]
+    
     jmp 0x08:0x10000
     ;jmp $
 
