@@ -138,4 +138,13 @@ write_entry() {
 # escrever entrada do kernel
 write_entry "KERNEL" $KERNEL_START $KERNEL_SECTORS $FS_OFFSET
 
+write_entry "INIT" 50 5 $((FS_OFFSET+16))
+write_entry "DR_V" 60 3 $((FS_OFFSET+32)) # DRIVER DE VIDEO
+write_entry "DRIVER1" 70 8 $((FS_OFFSET+48))
+
+#write_entry "TESTE" 50 5 $((FS_OFFSET+16))
+#write_entry "DRIVER1" 55 3 $((FS_OFFSET+32))
+#write_entry "DRIVER2" 58 4 $((FS_OFFSET+48))
+
+
 echo "===== BUILD OK ====="

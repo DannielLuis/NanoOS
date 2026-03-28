@@ -76,16 +76,28 @@ load_kernel:
 
     call newline
 
-    mov si, msg_fs_space    ; Tabulação de 4 espaços
-    call print
+   ; mov si, msg_fs_space    ; Tabulação de 4 espaços
+   ; call print
 
     ;mov si, msg_fs_ok
     ;call print
 
     mov si, FS_ADDR
-    mov cx, 1   ; só 1 entrada por enquanto
+    ;mov cx, 1   ; só 1 entrada por enquanto
+    ;mov cx, 4   ; só 1 entrada por enquanto
+    ;mov cx, 16  ; 16 entradas (256 bytes)
+
+    mov cx, 64   ; 64 entradas (1024 bytes)
 
 .fs_loop:
+    cmp byte [si], 0
+    ;je .fs_end
+    je .done_fs
+
+    push si ; salvar ponteiro da entrada atual
+    mov si, msg_fs_space    ; Tabulação de 4 espaços
+    call print
+    pop si  ; restaurar ponteiro da entrada atual
 
     ; imprimir nome (12 bytes)
     mov di, 12
@@ -120,6 +132,7 @@ load_kernel:
     add si, 4   ; pular resto da entrada
     loop .fs_loop
 
+.done_fs:
 
     ; =========================
     ; Log do Mini-FS lido
@@ -317,7 +330,7 @@ heads dw HEADS
 
 msg_fs_read     db " Mini-FS encontrado ... ", 0
 msg_fs          db " [ Mini-FS ]", 0
-msg_fs_space    db "     ", 0
+msg_fs_space    db " -    ", 0
 
 msg_fs_ok db "[FS OK]", 0
 ;msg_fs_read     db " [ FS READ ] ",0
