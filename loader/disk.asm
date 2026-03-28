@@ -39,7 +39,7 @@ load_kernel:
     call lba_to_chs
 
     mov ah, 0x02
-    mov al, 1
+    mov al, 1                   ; ler 1 setor por vez
     mov dl, [BOOT_DRIVE]
 
     int 0x13
@@ -168,17 +168,25 @@ load_kernel:
     pop cx
     pop si
 
-    mov al, [si+12]
-    mov ah, [si+13]
+   ; mov al, [si+12]
+   ; mov ah, [si+13]
 
+   ; mov [kernel_lba], al
+   ; mov [kernel_size], ah
+
+    mov al, [si+12]   ; LBA
     mov [kernel_lba], al
-    mov [kernel_size], ah
+
+    mov al, [si+13]   ; SIZE
+    mov [kernel_size], al
 
     mov si, msg_fs_ok
     call print
     call newline
 
     jmp load_kernel_sectors
+
+    ;jmp kernel_teste  ; teste de carregamento do kernel sem FS
 
 .next:
     pop cx
@@ -195,8 +203,17 @@ load_kernel:
 ; =========================
 load_kernel_sectors:
 
-   ; mov cl, [kernel_size]   ; quantidade de setores
-    mov ch, [kernel_size]   ; usar CH como contador
+    ;mov cl, [kernel_size]   ; quantidade de setores
+    ;mov ch, [kernel_size]   ; usar CH como contador
+
+    xor cx, cx
+    mov cl, [kernel_size]
+    ;mov si, cx
+
+    ;mov si, 0
+    ;mov cl, [kernel_size]   ; usar CL como contador
+    ;mov si, cx 
+
     mov bl, [kernel_lba]    ; LBA (NÃO usar DL)
 
     mov ax, KERNEL_LOAD_SEG
@@ -207,7 +224,9 @@ load_kernel_sectors:
 .read_loop:
 
     ;cmp cl, 0
-    cmp ch, 0
+    ;cmp ch, 0
+    ;cmp si, 0
+    cmp cx, 0
     je .done
 
     ; LBA -> CHS
@@ -215,9 +234,16 @@ load_kernel_sectors:
     xor ah, ah
     call lba_to_chs
 
+   ; mov ax, KERNEL_LOAD_SEG ; segmento destino (0x1000, 0x2000, etc)
+   ; mov es, ax ; definir ES para o segmento destino
+    ;mov bx, di              ; offset destino (0x0000, 0x1000, etc)
+
     mov ah, 0x02
-    mov al, 1
+    mov al, 1                   ; ler 1 setor por vez
+    ;mov al, cl                  ; ler todos os setores de uma vez (se possível)
+    ;mov al, FS_SECTORS   ; ler o número de setores do FS (2 setores)
     mov dl, [BOOT_DRIVE]
+
 
     mov bx, di              ; destino correto
 
@@ -225,15 +251,33 @@ load_kernel_sectors:
     jc disk_error
 
     ; DEBUG (opcional)
+    ;push si
+    push cx
+    push bx
+    push dx
     mov si, msg_ok
     call print
     call newline
+    ;pop si
+    pop dx
+    pop bx
+    pop cx
 
     ; próximo setor
     inc bl                  ; LBA++
-    dec cl                  ; contador--
+    ;dec cl                  ; contador--
+    ;dec ch                  ; contador--
+    ;dec si                  ; contador--
+    dec cx                  ; contador--
 
-    add di, 512             ; avançar memória (CORRETO)
+    ;add di, 512             ; avançar memória (CORRETO)
+    
+    add di, 512
+   ; jnc .ok
+  ;  add ax, 0x20
+ ;   mov es, ax
+;.ok:
+
     jmp .read_loop
 
 .done:
@@ -247,7 +291,7 @@ disk_error:
     popa
     stc
 
-    jmp $
+   ; jmp $
 
     ret
 
