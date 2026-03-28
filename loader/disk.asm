@@ -17,9 +17,9 @@ load_kernel:
     ; =========================
     ; garantir segmentos corretos
     ; =========================
-    xor ax, ax
-    mov ds, ax
-    mov es, ax
+    xor ax, ax  ; limpar ax
+    mov ds, ax  ; ds = 0
+    mov es, ax  ; es = 0
 
     ; =========================
     ; DEBUG: lendo FS
@@ -27,8 +27,6 @@ load_kernel:
     mov si, msg_fs_read
     call print
     ;call newline
-
-
 
     ; =========================
     ; ler FS via CHS
@@ -69,7 +67,6 @@ load_kernel:
 
 .fs_done:
     call newline
-
 
     ; =========================
     ; Conteudo do  Mini-FS
@@ -124,9 +121,9 @@ load_kernel:
     loop .fs_loop
 
 
-
-
-
+    ; =========================
+    ; Log do Mini-FS lido
+    ; =========================
     mov si, msg_fs_ok
     call print
     call newline
@@ -231,52 +228,6 @@ load_kernel_sectors:
     clc
     ret
     
-    
-;load_kernel_sectors:
- ;   mov si, msg_fs_ok
-  ;  call print
-
- ;   mov cl, [kernel_size]   ; setores
-  ;  mov dl, [kernel_lba]    ; LBA atual
-
- ;   mov ax, KERNEL_LOAD_SEG
-  ;  mov es, ax
-  ;  ;xor bx, bx
-
- ;   xor di, di              ; usar DI como offset
-
-;.read_loop:
-
-  ;  cmp cl, 0
- ;   je .done
-
- ;   mov al, dl
- ;   xor ah, ah
-  ;  call lba_to_chs
-
- ;   mov ah, 0x02
- ;   mov al, 1
- ;   mov dl, [BOOT_DRIVE]
-    
- ;   mov bx, di
-
- ;   int 0x13
- ;   jc disk_error
-    
- ;   mov si, msg_fs_ok
- ;   call print
-
-    ; próximo setor
- ;   inc dl
-  ;  dec cl
-
-  ;  add bx, 512
- ;   jmp .read_loop
-
-;.done:
-  ;  popa
-  ;  clc
-  ;  ret
 
 
 disk_error:
@@ -289,8 +240,21 @@ disk_error:
 
 
 
+lba_to_chs:
 
+    xor dx, dx
+    div word [spt]
 
+    mov cl, dl
+    inc cl
+
+    xor dx, dx
+    div word [heads]
+
+    mov dh, dl
+    mov ch, al
+
+    ret
 
 
 
@@ -335,57 +299,22 @@ hex_digit:
     ret
 
 
-
-
 print_char:
     mov ah, 0x0E
     int 0x10
     ret
+    
 
-    
-    
-    
-    
+
     
 SECTORS_PER_TRACK equ 18
 HEADS equ 2
 
-lba_to_chs:
-
-    xor dx, dx
-    div word [spt]
-
-    mov cl, dl
-    inc cl
-
-    xor dx, dx
-    div word [heads]
-
-    mov dh, dl
-    mov ch, al
-
-    ret
-
 spt   dw SECTORS_PER_TRACK
 heads dw HEADS
-    
-    
-; =========================
-; DAP (Disk Address Packet)
-; =========================
-dap:
-    db 0x10       ; tamanho
-    db 0
-    dw 0          ; setores
-    dw 0          ; offset
-    dw 0          ; segment
-    dd 0          ; LBA baixo
-    dd 0          ; LBA alto
 
-    
-    
-    
-    
+
+
 msg_fs_read     db " Mini-FS encontrado ... ", 0
 msg_fs          db " [ Mini-FS ]", 0
 msg_fs_space    db "     ", 0
@@ -393,9 +322,7 @@ msg_fs_space    db "     ", 0
 msg_fs_ok db "[FS OK]", 0
 ;msg_fs_read     db " [ FS READ ] ",0
 
-    
-    
-    
+
 kernel_name db "KERNEL      "
 
 kernel_lba  db 0
