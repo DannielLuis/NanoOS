@@ -1,13 +1,10 @@
 [bits 32]
-;;[org 0x100000]
 [org 0x10000]
 
 jmp kernel_start   ; <-- GARANTE posição 0
 
-%include "screen.asm"
 
-;MEMORY_MAP      equ 0x5000
-;MEMORY_COUNT    equ 0x4FF0
+;%include "screen.asm"
 
 
 kernel_start:
@@ -53,69 +50,81 @@ kernel_start:
     call clear_screen     ; Limpa a tela
     call update_cursor    ; atualiza o cursor
 
+    ; ================================
     ; linha superior
+    ; ================================
     mov dword [cursor_y], 0
     call draw_line
  ;;;;;;;   mov esi, line80
  ;;;;;;;;   call print_string_pm
 
 
-   ; call newline_pm
-
-
+    ; ================================
     ; título
+    ; ================================
     mov esi, title
-    mov eax, 30    ;31    ;25        ; posição X (centralizado manual)
+    mov eax, 30    ;31    ;25   ; posição X (centralizado manual)
     mov ebx, 1    ;0    linha
     call print_at
 
 
-
- ;   call newline_pm
-
-
-
+    ; ================================
     ; linha inferior
+    ; ================================
   ;  mov eax, 25        ; posição X (centralizado manual)
  ;   mov ebx, 4    ;0    linha
-    mov dword [cursor_y], 2
+    ; dword é usado para garantir que estamos 
+    ; escrevendo um valor de 32 bits
+    mov dword [cursor_y], 2 ; linha 2
   ;  call set_cursor
     call draw_line
 
-;;;;;;;    mov esi, line80
-;;;;;    call print_string_pm
-
-
-
-
-
-
 
 
     call newline_pm
     call newline_pm
 
 
-    mov esi, msg1
+    mov esi, msg_a
     call print_string_pm
 
 
     call newline_pm
+    call newline_pm
 
 
-    mov esi, msg2
-    call print_string_pm
+  ;  mov esi, msg_b
+  ;  call print_string_pm
 
    ; call newline_pm
 
 
-    mov eax, 0        ; posição X
-    mov ebx, 10       ; posição Y
+  ;  mov eax, 0        ; posição X
+   ; mov ebx, 10       ; posição Y
   ;  mov dword [cursor_x], 0
   ;  mov dword [cursor_y], 20
-    call set_cursor
+   ; call set_cursor
 
-    call update_cursor
+ ;;;;;;;   call update_cursor
+
+
+    mov esi, msg_b
+    call log_info
+    
+    mov esi, msg1
+    call log_ok
+
+    mov esi, msg2
+    call log_warn
+
+    mov esi, msg3
+    call log_err
+
+
+  ;  mov eax, 0        ; posição X
+   ; mov ebx, 10       ; posição Y
+  ;  mov dword [cursor_y], 20
+  ;  call set_cursor
 
 .loop:
     hlt
@@ -123,151 +132,33 @@ kernel_start:
 
 
 
-msg1   db " NanoOS Kernel iniciado" , 0
-msg2   db " Sistema de logs OK" , 0
+;section .data
+
+
+
+
+; ================================
+; Mensagens de log
+; ================================
+title db "NanoOS Kernel v1.0", 0
+
+msg_a   db " NanoOS Kernel iniciado" , 0
+msg_b   db "Sistema de logs OK" , 0
+
+msg1    db "Inicializando kernel...", 0
+msg2    db "IDT sem handlers ...",0
+msg3    db "Falha ao carregar driver", 0
 
 
 
 
 
 
-
-
-
-
-
-loop_entries:
-
-    cmp ecx, 0
-    je done
-
-    mov eax, [esi+16]   ; type
-
-    cmp eax, 1
-    jne next
-
-    mov eax, [esi+8]    ; length low
-    add ebx, eax
-
-next:
-
-    ;add esi, 24
-    add esi, 20
-    dec ecx
-    jmp loop_entries
-
-done:
-
-    ; =========================
-    ; TESTE 1 — RAM total (EBX vindo do E820)
-    ; =========================
-
-    mov eax, ebx
-    shr eax, 20            ; MB
-
-    add al, '0'
-
-    mov ah, 0x07
-    mov [edi+4], ax        ; posição 1
-
-
-    ; =========================
-    ; TESTE 2 — RAM em páginas (antes do PMM)
-    ; =========================
-
-    mov eax, ebx
-    shr eax, 12            ; páginas
-
-    add al, '0'
-
-    mov ah, 0x07
-    mov [edi+6], ax        ; posição 2
-
-
-    ; =========================
-    ; INIT PMM
-    ; =========================
-
-    call pmm_init
-
-
-    ; =========================
-    ; TESTE 3 — TOTAL_PAGES
-    ; =========================
-
-    mov eax, [TOTAL_PAGES]
-
-    shr eax, 8             ; só pra caber em 1 dígito
-
-    add al, '0'
-
-    mov ah, 0x07
-    mov [edi+8], ax        ; posição 3
-
-
-    ; =========================
-    ; TESTE 4 — alloc_page
-    ; =========================
-
-  ;  call pmm_alloc_page
-  ;  call pmm_alloc_page
-
-   ; mov eax, eax           ; endereço retornado
-
-  ;  shr eax, 12            ; índice da página
-
-  ;  add al, '0'
-
-   ; mov ah, 0x07
-  ;  mov [edi+10], ax       ; posição 4
-
-    ; =========================
-; TESTE 4 — alloc_page HEX
-; =========================
-
-call pmm_alloc_page
-call pmm_alloc_page
-
-mov eax, eax
-
-shr eax, 12
-
-mov bl, al
-
-; high nibble
-mov al, bl
-shr al, 4
-call print_hex_digit
-
-mov ah, 7
-mov [edi+10], ax
-
-; low nibble
-mov al, bl
-and al, 0x0F
-call print_hex_digit
-
-mov ah, 7
-mov [edi+12], ax
-
-
-print_hex_digit:
-
-    cmp al, 9
-    jbe .num
-
-    add al, 7
-
-.num:
-    add al, '0'
-    ret
-
-hang:
-    jmp hang
-
-
+; =================================
+; Incluindo outros arquivos
+; =================================
 %include "pmm.asm"
-;%include "screen.asm"
+%include "screen.asm"
     
     
     
