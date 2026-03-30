@@ -12,7 +12,8 @@ KERNEL=kernel.asm
 
 BOOT_BIN=boot.bin
 LOADER_BIN=loader.bin
-KERNEL_BIN=KERNEL
+#KERNEL_BIN=KERNEL
+KERNEL_BIN=kernel.bin
 
 # =====================
 # LAYOUT FIXO
@@ -22,10 +23,12 @@ BOOT_SECTOR=0
 LOADER_START=1
 LOADER_MAX_SECTORS=19   # espaço até setor 19
 
-FS_START=20
+#FS_START=20
+FS_START=10
 FS_SECTORS=2
 
-KERNEL_START=30
+#KERNEL_START=30
+KERNEL_START=15
 
 # =====================
 # LIMPAR

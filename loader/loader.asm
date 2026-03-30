@@ -117,8 +117,12 @@ start:
     
     
     ; ===== carregar kernel =====
-    ;mov si, msg_loading
-    ;call print
+   ; mov si, msg_loading
+   ; call print
+
+    ;call find_kernel
+    ;jc .kernel_fail
+
 
     call load_kernel
     jc .kernel_fail
@@ -158,6 +162,27 @@ start:
     call print
 
     call newline
+
+    ;mov ax, 0x1000  ; segmento de código do kernel
+    mov ax, KERNEL_LOAD_SEG  ; segmento de código do kernel --- IGNORE ---
+    mov ds, ax      ; segmento de dados do kernel
+    mov es, ax      ; segmento extra (para leitura do kernel)
+
+    mov si, 0x0000  ; offset de entrada do kernel
+
+    mov al, [si]    ; primeiro byte do kernel (deve ser 0x7F, 'ELF')
+    call print_hex  ; imprimir em hexadecimal para debug
+    call newline    ; nova linha
+
+    mov al, [si+1]  ; segundo byte do kernel (deve ser 'E')
+    call print_hex  ; imprimir em hexadecimal para debug
+    call newline    ; nova linha
+
+    mov al, [si+2]  ; terceiro byte do kernel (deve ser 'L')
+    call print_hex  ; imprimir em hexadecimal para debug
+    call newline    ; nova linha
+
+    ;jmp $
 
     ; ===== entrar em protected mode =====
     call enter_protected_mode

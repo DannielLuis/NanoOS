@@ -1,3 +1,218 @@
 
+loop_entries:
+
+    cmp ecx, 0
+    je done
+
+    mov eax, [esi+16]   ; type
+
+    cmp eax, 1
+    jne next
+
+    mov eax, [esi+8]    ; length low
+    add ebx, eax
+
+next:
+
+    ;add esi, 24
+    add esi, 20
+    dec ecx
+    jmp loop_entries
+
+done:
+
+    ; =========================
+    ; TESTE 1 — RAM total (EBX vindo do E820)
+    ; =========================
+
+    mov eax, ebx
+    shr eax, 20            ; MB
+
+    add al, '0'
+
+    mov ah, 0x07
+    mov [edi+4], ax        ; posição 1
+
+
+    ; =========================
+    ; TESTE 2 — RAM em páginas (antes do PMM)
+    ; =========================
+
+    mov eax, ebx
+    shr eax, 12            ; páginas
+
+    add al, '0'
+
+    mov ah, 0x07
+    mov [edi+6], ax        ; posição 2
+
+
+    ; =========================
+    ; INIT PMM
+    ; =========================
+
+    call pmm_init
+
+
+    ; =========================
+    ; TESTE 3 — TOTAL_PAGES
+    ; =========================
+
+    mov eax, [TOTAL_PAGES]
+
+    shr eax, 8             ; só pra caber em 1 dígito
+
+    add al, '0'
+
+    mov ah, 0x07
+    mov [edi+8], ax        ; posição 3
+
+
+    ; =========================
+    ; TESTE 4 — alloc_page
+    ; =========================
+
+  ;  call pmm_alloc_page
+  ;  call pmm_alloc_page
+
+   ; mov eax, eax           ; endereço retornado
+
+  ;  shr eax, 12            ; índice da página
+
+  ;  add al, '0'
+
+   ; mov ah, 0x07
+  ;  mov [edi+10], ax       ; posição 4
+
+    ; =========================
+; TESTE 4 — alloc_page HEX
+; =========================
+
+call pmm_alloc_page
+call pmm_alloc_page
+
+mov eax, eax
+
+shr eax, 12
+
+mov bl, al
+
+; high nibble
+mov al, bl
+shr al, 4
+call print_hex_digit
+
+mov ah, 7
+mov [edi+10], ax
+
+; low nibble
+mov al, bl
+and al, 0x0F
+call print_hex_digit
+
+mov ah, 7
+mov [edi+12], ax
+
+
+print_hex_digit:
+
+    cmp al, 9
+    jbe .num
+
+    add al, 7
+
+.num:
+    add al, '0'
+    ret
+
+hang:
+    jmp hang
+
+    
+    
+    
+    
+    
+    
+    
+
+echo "# NanoOS" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:DannielLuis/NanoOS.git
+git push -u origin main
+
+
+
+
+
 
 qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+./script.sh && qemu-system-i386 -drive file=boot.img,format=raw,if=floppy
+
+qemu-system-i386 -soundhw pcspk -fda disk_images/mikeos.flp
+
+
+hexdump -C boot.img | head
+hexdump -C boot.img
+hexdump -C build/disk.img | less
+
+hexdump -C boot.img | grep -n "eb 00 fa"
+hexdump -C boot.img | grep KERNEL
+
+
+stat -c%s loader.bin
+
+
+
+
+
+
+
+
+
+
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
+cmake --build build
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+dd if=build/disk.img bs=512 skip=1 count=1 | hexdump -C
+hexdump -C build/disk.img | less
+cmake --build build
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
+cmake --build build
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+rm -rf build
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
+cmake --build build
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses
+clear
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+ps -ef | grep qemu | grep -v grep | awk '{print $2}' | xargs -r kill -9
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -display curses
+clear
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -display curses
+clear
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+ps -ef | grep qemu | grep -v grep | awk '{print $2}' | xargs -r kill -9
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses -monitor none -no-reboot -no-shutdown
+clear
+ps -ef | grep qemu | grep -v grep | awk '{print $2}' | xargs -r kill -9
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -display curses
+clear
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses -monitor none -no-reboot -no-shutdown
+clear
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy 
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -curses -monitor none -no-reboot -no-shutdown
+qemu-system-i386 -drive file=build/disk.img,format=raw,if=floppy -display curses

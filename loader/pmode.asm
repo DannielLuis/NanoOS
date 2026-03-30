@@ -22,11 +22,25 @@ protected_mode_start:
     mov ss, ax
 
     mov esp, 0x90000
+
+    cli     ; desabilitar interrupções antes de configurar a IDT
     
     ;call load_idt
     lidt [idt_descriptor]
     
-    jmp 0x08:0x10000
+    ;jmp $
+
+   ; mov dword [0xB8000], 0x0720074C   ; 'L'
+   ; mov eax, [0x10000]
+   ; mov dword [0xB8004], eax
+
+   ; mov edi, 0xB8000
+   ; mov eax, 0x0720074B
+   ; mov [edi], eax
+
+    ; Pular para o kernel em 0x10000 (carregado no real mode)
+    ; 0x08 é o seletor de código do kernel na GDT
+    jmp 0x08:0x10000    ; pular para o kernel em 0x10000 (carregado no real mode)
     ;jmp $
 
     
