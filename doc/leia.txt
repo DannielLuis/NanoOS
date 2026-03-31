@@ -1,3 +1,90 @@
+dd if=/dev/zero of=disk.img bs=1M count=32
+
+✅ 1. Criando uma imagem de HD com dd
+
+Exemplos:
+
+🔹 2 GB
+dd if=/dev/zero of=disk.img bs=1M count=2048
+
+🔹 4 GB
+dd if=/dev/zero of=disk.img bs=1M count=4096
+
+🔹 8 GB
+dd if=/dev/zero of=disk.img bs=1M count=8192
+
+
+
+
+
+qemu-system-i386 -hda boot.img
+👉 o padrão geralmente é:
+    128 MB de RAM
+
+✔️ Como definir a quantidade de RAM
+
+Use o parâmetro:
+
+-m <tamanho>
+
+
+
+
+🔹 Exemplos
+64 MB
+qemu-system-i386 -hda boot.img -m 64M
+128 MB
+qemu-system-i386 -hda boot.img -m 128M
+512 MB
+qemu-system-i386 -hda boot.img -m 512M
+1 GB
+qemu-system-i386 -hda boot.img -m 1G
+
+
+
+
+
+
+✔️ Teste prático (recomendado)
+
+Rode:
+
+qemu-system-i386 -hda boot.img -m 32M
+
+👉 Você vai ver menos entradas no E820
+
+Depois:
+
+qemu-system-i386 -hda boot.img -m 512M
+
+👉 Mais memória → mapa maior
+
+
+
+
+
+
+
+
+
+
+
+✔️ Dica avançada (importante pro seu PMM)
+
+Quando você fizer o gerenciador de memória:
+
+👉 sempre teste com:
+
+-m 16M
+-m 64M
+-m 512M
+
+
+
+
+
+
+
 
 loop_entries:
 
