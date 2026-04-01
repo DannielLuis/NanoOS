@@ -23,12 +23,14 @@ BOOT_SECTOR=0
 LOADER_START=1
 LOADER_MAX_SECTORS=19   # espaço até setor 19
 
-#FS_START=20
-FS_START=10
+FS_START=20
+#FS_START=10
 FS_SECTORS=2
 
-#KERNEL_START=30
-KERNEL_START=15
+KERNEL_START=30
+#KERNEL_START=15
+
+DISK_SIZE=20480  # setores (~10MB)
 
 # =====================
 # LIMPAR
@@ -40,7 +42,9 @@ rm -f *.bin *.img
 # CRIAR IMAGEM LIMPA
 # =====================
 echo "[2] Criando imagem..."
-dd if=/dev/zero of=$IMG bs=512 count=2880 status=none
+#dd if=/dev/zero of=$IMG bs=512 count=2880 status=none
+dd if=/dev/zero of=$IMG bs=512 count=$DISK_SIZE status=none
+
 
 # =====================
 # COMPILAR
