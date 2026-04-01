@@ -1,7 +1,7 @@
 [bits 16]
 
-;FS_START equ 20
-FS_START equ 10
+FS_START equ 20
+;FS_START equ 10
 FS_SECTORS equ 2
 FS_ADDR  equ 0x5000
 
@@ -34,18 +34,40 @@ load_kernel:
     ; =========================
     ; Carregar FS (setor 20)
     ; =========================
-    mov bx, FS_ADDR
+  ;  mov bx, FS_ADDR
 
-    mov ax, FS_START
-    call lba_to_chs
+  ;  mov ax, FS_START
+  ;  call lba_to_chs
 
-    mov ah, 0x02
-    mov al, 1                   ; ler 1 setor por vez
-    mov dl, [BOOT_DRIVE]
+  ;  mov ah, 0x02
+  ;  mov al, 1                   ; ler 1 setor por vez
+  ;  mov dl, [BOOT_DRIVE]
 
-    int 0x13
-    ;jc disk_error
-    jc .fs_fail
+  ;  int 0x13
+  ;  ;jc disk_error
+  ;  jc .fs_fail
+
+
+    ; =========================
+; configurar DAP para FS
+; =========================
+mov word [dap+2], FS_SECTORS   ; quantidade de setores
+
+mov word [dap+4], FS_ADDR      ; offset destino
+mov word [dap+6], 0x0000       ; segmento (0x0000:FS_ADDR)
+
+xor eax, eax
+mov ax, FS_START               ; LBA inicial (16 bits já suficiente)
+mov dword [dap+8], eax         ; LBA low
+mov dword [dap+12], 0          ; LBA high
+
+
+; =========================
+; ler FS via LBA
+; =========================
+call read_lba
+jc .fs_fail
+
 
     ; =========================
     ; DEBUG: lendo FS
@@ -170,14 +192,17 @@ load_kernel:
     pop si
 
     mov al, [si+12]
+    mov [kernel_lba], al
+
     mov ah, [si+13]
+    mov [kernel_size], al
 
    ; mov dword [kernel_lba], [al+1]   ; LBA start
    ; mov dword [kernel_lba], 0
    ; mov [kernel_lba], [si+12]   ; LBA start
 
-    inc al
-    mov [kernel_lba], al
+   ; inc al
+   ; mov [kernel_lba], al
    ; mov [kernel_size], ah
    ; mov [kernel_lba], 1Eh
   ;  mov [kernel_size], 2
@@ -188,10 +213,13 @@ load_kernel:
 
    ; jmp load_kernel_sectors
 
+    call check_extensions
    ; jmp $
 
-    jmp testando
+   ; jmp load_kernel_sectors_b
 
+   ; jmp carregar_kernel
+    jmp carregar_kernel_b
 
 .next:
     pop cx
@@ -202,7 +230,7 @@ load_kernel:
 
     jmp disk_error
 
-testando:
+carregar_kernel:
   ;  pusha
 
   ;  mov ax, 0x1000      ; segmento onde o kernel será carregado
@@ -347,6 +375,106 @@ lba_to_chs_b:
    ; call newline
 
     ret
+
+
+
+carregar_kernel_b:
+
+   ; jmp $
+
+    mov ax, KERNEL_LOAD_SEG
+    mov es, ax
+
+    xor bx, bx                ; offset inicial
+
+    mov si, kernel_lba
+    mov cl, [kernel_size]
+
+.load_loop:
+
+    ; =========================
+    ; configurar DAP
+    ; =========================
+
+    mov word [dap+2], 1       ; 1 setor
+
+    mov [dap+4], bx           ; offset
+    mov [dap+6], es           ; segmento
+
+    xor eax, eax
+    mov al, [si]              ; LBA (8 bits → suficiente pra você agora)
+    mov dword [dap+8], eax    ; LBA low
+    mov dword [dap+12], 0     ; LBA high
+
+    ; =========================
+    ; ler setor
+    ; =========================
+
+    call read_lba
+    jc disk_error
+
+    add bx, 512
+    inc byte [si]
+
+    dec cl
+    jnz .load_loop
+
+    mov si, msg_fs_ok
+    call print
+    call newline
+
+    popa
+    clc
+    ret
+
+
+
+read_lba:
+
+    pusha
+
+    mov si, dap
+
+    mov ah, 0x42
+    mov dl, [BOOT_DRIVE]
+
+    int 0x13
+    jc .fail
+
+    popa
+    clc
+    ret
+
+.fail:
+    popa
+    stc
+    ret
+
+
+
+
+check_extensions:
+
+    mov ah, 0x41
+    mov bx, 0x55AA
+    mov dl, [BOOT_DRIVE]
+
+    int 0x13
+    jc .no
+
+    cmp bx, 0xAA55
+    jne .no
+
+    test cx, 1
+    jz .no
+
+    ret
+
+.no:
+    mov si, msg_fail
+    call print
+    jmp $
+
 
 
 
@@ -608,9 +736,15 @@ kernel_name db "KERNEL      "
 ;kernel_size db 0
 
 kernel_lba  db 30
-kernel_size db 2
+kernel_size db 3
     
     
     
-    
+dap:
+    db 0x10        ; tamanho da estrutura (16 bytes)
+    db 0x00        ; reservado
+    dw 0x0001      ; número de setores (ajustamos depois)
+    dw 0x0000      ; offset destino
+    dw 0x0000      ; segmento destino
+    dq 0x00000000  ; LBA (64 bits)
     
