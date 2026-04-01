@@ -86,6 +86,61 @@ Quando você fizer o gerenciador de memória:
 
 
 
+
+⚠️ O WARNING DO QEMU
+WARNING: Image format was not specified...
+
+👉 Tradução técnica direta:
+
+O QEMU não sabe o formato do disco
+Ele adivinhou como raw
+Mas por segurança:
+bloqueia escrita no setor 0 (MBR)
+
+👉 Isso pode quebrar coisas futuras (especialmente se 
+for escrever no disco em runtime)
+
+✅ SOLUÇÃO CORRETA
+
+Precisa especificar explicitamente o formato raw.
+
+🔧 Usar:
+qemu-system-i386 -drive format=raw,file=src/boot.img -m 32M
+
+qemu-system-i386 \
+  -drive file=src/boot.img,format=raw,if=ide \
+  -m 32M
+
+  
+❌ Não use mais:
+-hda src/boot.img
+somente se for para testes
+
+
+
+🧠 POR QUE ISSO IMPORTA
+Sem isso:
+    QEMU bloqueia escrita no setor 0
+
+Com isso:
+    acesso total ao disco ✔
+    MBR pode ser modificado em runtime✔
+    FS pode evoluir ✔
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 loop_entries:
 
     cmp ecx, 0
