@@ -103,23 +103,61 @@ build_fallback_map:
     ; =========================
     ; REGIÃO 1: memória baixa
     ; =========================
-    mov dword [edi + 0],  0x00000000   ; base low
-    mov dword [edi + 4],  0x00000000   ; base high
-    mov dword [edi + 8],  0x0009FC00   ; length low
-    mov dword [edi + 12], 0x00000000   ; length high
-    mov dword [edi + 16], 1            ; type = usable
+   ; mov dword [edi + 0],  0x00000000   ; base low
+   ; mov dword [edi + 4],  0x00000000   ; base high
+   ; mov dword [edi + 8],  0x0009FC00   ; length low
+   ; mov dword [edi + 12], 0x00000000   ; length high
+   ; mov dword [edi + 16], 1            ; type = usable
+
+    ; =========================
+    ; REGIÃO 1: IVT + BDA (RESERVADO)
+    ; =========================
+    mov dword [edi + 0],  0x00000000
+    mov dword [edi + 4],  0x00000000
+    mov dword [edi + 8],  0x00000500
+    mov dword [edi + 12], 0x00000000
+    mov dword [edi + 16], 2              ; reservado
 
     ; =========================
     ; REGIÃO 2: memória alta (1MB → 32MB)
     ; =========================
-    mov dword [edi + 20], 0x00100000   ; base low
-    mov dword [edi + 24], 0x00000000   ; base high
-    mov dword [edi + 28], 0x01F00000   ; length low (31MB)
-    mov dword [edi + 32], 0x00000000   ; length high
-    mov dword [edi + 36], 1            ; type = usable
+   ; mov dword [edi + 20], 0x00100000   ; base low
+   ; mov dword [edi + 24], 0x00000000   ; base high
+   ; mov dword [edi + 28], 0x01F00000   ; length low (31MB)
+   ; mov dword [edi + 32], 0x00000000   ; length high
+   ; mov dword [edi + 36], 1            ; type = usable
+
+    ; =========================
+    ; REGIÃO 2: RAM utilizável baixa
+    ; =========================
+    mov dword [edi + 20], 0x00000500
+    mov dword [edi + 24], 0x00000000
+    mov dword [edi + 28], 0x0009F700     ; até ~0x9FC00
+    mov dword [edi + 32], 0x00000000
+    mov dword [edi + 36], 1              ; utilizável
+
+    ; =========================
+    ; REGIÃO 3: BIOS/VGA (RESERVADO)
+    ; =========================
+    mov dword [edi + 40], 0x000A0000
+    mov dword [edi + 44], 0x00000000
+    mov dword [edi + 48], 0x00060000     ; até 1MB
+    mov dword [edi + 52], 0x00000000
+    mov dword [edi + 56], 2              ; reservado
+
+    ; =========================
+    ; REGIÃO 4: RAM alta (1MB → 32MB)
+    ; =========================
+    mov dword [edi + 60], 0x00100000
+    mov dword [edi + 64], 0x00000000
+    mov dword [edi + 68], 0x01F00000
+    mov dword [edi + 72], 0x00000000
+    mov dword [edi + 76], 1              ; utilizável
+
+    mov dword [memory_entry_count], 4
 
     ; total de entradas = 2
-    mov dword [memory_entry_count], 2
+   ; mov dword [memory_entry_count], 2
 
     popad
     ret
