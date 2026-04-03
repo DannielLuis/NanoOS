@@ -38,6 +38,30 @@ protected_mode_start:
    ; mov eax, 0x0720074B
    ; mov [edi], eax
 
+
+   ; jmp $
+
+    mov eax, 0x5FF0
+   ; mov eax, 0x4FF0
+    mov al, [eax]
+
+    mov edi, 0xB8000
+    mov ah, 0x07
+    mov [edi], ax
+
+   ; jmp $
+
+    ;mov eax, 0x5FF0
+    mov eax, 0x4FF0
+    mov al, [eax]
+
+    mov edi, 0xB8000
+    mov ah, 0x07
+    mov [edi], ax
+
+    ;jmp $
+
+
     ; Pular para o kernel em 0x10000 (carregado no real mode)
     ; 0x08 é o seletor de código do kernel na GDT
     jmp 0x08:0x10000    ; pular para o kernel em 0x10000 (carregado no real mode)

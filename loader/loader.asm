@@ -95,6 +95,7 @@ start:
 
     mov si, msg_memory
     call print
+    call newline
 
     call detect_memory
     jc .mem_fail
@@ -113,6 +114,9 @@ start:
     
     
     
+   ; call log_teste
+
+   ; jmp $
 
     
     
@@ -164,25 +168,89 @@ start:
     call newline
 
     ;mov ax, 0x1000  ; segmento de código do kernel
-    mov ax, KERNEL_LOAD_SEG  ; segmento de código do kernel --- IGNORE ---
-    mov ds, ax      ; segmento de dados do kernel
-    mov es, ax      ; segmento extra (para leitura do kernel)
+  ;  mov ax, KERNEL_LOAD_SEG  ; segmento de código do kernel --- IGNORE ---
+  ;  mov ds, ax      ; segmento de dados do kernel
+  ;  mov es, ax      ; segmento extra (para leitura do kernel)
 
-    mov si, 0x0000  ; offset de entrada do kernel
+  ;  mov si, 0x0000  ; offset de entrada do kernel
 
-    mov al, [si]    ; primeiro byte do kernel (deve ser 0x7F, 'ELF')
-    call print_hex  ; imprimir em hexadecimal para debug
-    call newline    ; nova linha
+  ;  mov al, [si]    ; primeiro byte do kernel (deve ser 0x7F, 'ELF')
+  ;  call print_hex  ; imprimir em hexadecimal para debug
+  ;  call newline    ; nova linha
 
-    mov al, [si+1]  ; segundo byte do kernel (deve ser 'E')
-    call print_hex  ; imprimir em hexadecimal para debug
-    call newline    ; nova linha
+  ;  mov al, [si+1]  ; segundo byte do kernel (deve ser 'E')
+  ;  call print_hex  ; imprimir em hexadecimal para debug
+  ;  call newline    ; nova linha
 
-    mov al, [si+2]  ; terceiro byte do kernel (deve ser 'L')
-    call print_hex  ; imprimir em hexadecimal para debug
-    call newline    ; nova linha
+  ;  mov al, [si+2]  ; terceiro byte do kernel (deve ser 'L')
+  ;  call print_hex  ; imprimir em hexadecimal para debug
+  ;  call newline    ; nova linha
 
-    ;jmp $
+   ; jmp $
+
+
+
+
+   ; call log_teste
+
+   ; jmp $
+
+
+
+ ;   mov si, MEMORY_MAP_ADDR
+
+ ;   ;mov al, [si+16]
+  ;  mov ax, [si+16]
+ ;   call print_hex
+ ;   call newline
+
+  ;  mov si, MEMORY_MAP_ADDR
+
+  ;  mov ax, [si]
+  ;  call print_hex
+  ;  call newline
+
+ ;   mov ax, [si+8]
+ ;   call print_hex
+  ;  call newline
+
+  ;  mov ax, [si+12]
+  ;  call print_hex
+  ;  call newline
+
+  ;  mov ax, [si+16]
+  ;  call print_hex
+ ;   call newline
+
+  ;  mov ax, [si+18]
+  ;  call print_hex
+
+   ; jmp $
+
+
+
+
+
+
+  ;  mov si, MEMORY_MAP_ADDR    ; 0x6000
+  ;  mov di, 0x9000             ; NOVO LOCAL SEGURO
+  ;  mov cx, 512                ; copia 512 bytes (mais que suficiente)
+
+;.copy:
+  ;  mov al, [si]
+  ;  mov [di], al
+  ;  inc si
+  ;  inc di
+  ;  loop .copy
+
+  ;  ;mov si, [0x9000]
+  ;  ;mov ax, [si+16]
+  ;  mov ax, [0x9000+16]
+  ;  call print_hex
+
+    call log_teste
+
+   ; jmp $
 
     ; ===== entrar em protected mode =====
     call enter_protected_mode
@@ -191,6 +259,190 @@ start:
 
 hang:
     jmp hang
+
+
+log_teste:
+    mov si, tamanho_da_entidade
+    mov ax, [si]
+    call print
+
+    mov si, last_entry_size
+    mov ax, [si]
+    call print_hex
+
+   ; mov al, ' '
+   ; mov ah, 0x0E
+   ; int 0x10
+    call newline
+
+    mov si, tamanho_da_lista
+    mov ax, [si]
+    call print
+
+    mov si, MEMORY_MAP_COUNT
+    mov ax, [si]
+    call print_hex
+
+   ; mov al, ' '
+   ; mov ah, 0x0E
+   ; int 0x10
+    call newline
+    call newline
+
+  ;  mov al, '-'
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+  ;  mov al, ' '
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+    mov si, MEMORY_MAP_ADDR
+    mov cl, [MEMORY_MAP_COUNT]
+
+.loop:
+    ; print base low
+  ;  mov ax, [si]
+  ;  call print_hex
+
+    ; print length low
+  ;  mov ax, [si+8]
+  ;  call print_hex
+
+    ; print type
+  ;  mov ax, [si+16]
+  ;  call print_hex
+
+  ;  call newline
+
+  ;  add si, 24
+   ; dec cl
+   ; jnz .loop
+
+
+
+
+
+
+
+
+
+    ; base low
+    ;mov si, di      ; ainda em teste
+    mov ax, [si]
+   ; mov [di], ax
+   ; mov ax, [es:di] ; ainda em teste
+    call print_hex
+
+    ; base high
+    mov ax, [si+4]
+   ; mov [di+4], ax
+    call print_hex
+
+    mov al, ' '
+    mov ah, 0x0E
+    int 0x10
+
+    ; length low
+    mov ax, [si+8]
+  ;  mov [di+8], ax
+    call print_hex
+
+    ; length high
+    mov ax, [si+12]
+  ;  mov [di+12], ax
+    call print_hex
+
+    mov al, ' '
+    mov ah, 0x0E
+    int 0x10
+
+    ; type
+  ;  mov ax, [si+16]
+   ; call print_hex
+
+  ;  mov ax, [si+24]
+  ;  call print_hex
+
+
+    mov ax, [si+16]     ; type
+    mov [di+16], ax
+    call print_hex
+
+  ;  mov ax, [si+24]     ; tipo extra (se existir)
+  ;  mov [di+24], ax
+  ;  call print_hex
+
+
+
+
+
+   ; mov eax, [es:di]
+  ;  mov ax, [es:di]
+  ;  mov ax, [si]
+  ;  call print_hex
+
+  ;  mov al, '-'
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+    ; length low
+  ;  mov eax, [es:di+8]
+  ;  call print_hex
+
+  ;  mov al, ' '
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+    ; type
+  ;  mov eax, [es:di+16]
+  ;  call print_hex
+
+  ;  mov al, ' '
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+   ; ; type
+  ;  mov eax, [es:di+20]
+  ;  call print_hex
+
+
+
+
+    ; base low
+  ;  mov eax, [es:di]
+  ;  call print_hex
+
+  ;  mov al, '-'
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+    ; length low
+  ;  mov eax, [es:di+8]
+  ;  call print_hex
+
+  ;  mov al, ' '
+  ;  mov ah, 0x0E
+  ;  int 0x10
+
+    ; type
+  ;  mov eax, [es:di+16]
+  ;  call print_hex
+
+    call newline
+
+   ; add si, 20  ; próxima entrada 24 ou 20 (dependendo do que o BIOS retornar)
+    ;add si, 24  ; próxima entrada 24 ou 20 (dependendo do que o BIOS retornar)
+    add si, [last_entry_size] ; próxima entrada (tamanho da última entrada retornada pelo BIOS)
+    dec cl
+    jnz .loop
+
+    ret
+
+
+tamanho_da_entidade db "tamanho da entidade: ", 0
+tamanho_da_lista db "tamanho da lista: ", 0
+
 
 
 header:
