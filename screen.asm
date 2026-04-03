@@ -173,6 +173,145 @@ print_string_pm:
 
 
 
+print_hex_pm_:
+
+    pushad
+
+    mov ebx, eax
+
+    mov ecx, 8
+
+.next:
+    mov eax, ebx
+    shr eax, 28        ; pega nibble mais alto
+    call hex_digit_pm_
+
+    shl ebx, 4         ; avança
+    loop .next
+
+    popad
+    ret
+
+
+hex_digit_pm_:
+
+    cmp al, 9
+    jbe .num
+
+    add al, 'A' - 10
+    jmp .out
+
+.num:
+    add al, '0'
+
+.out:
+    call print_char_pm
+    ret
+
+
+print_hex_pm_prefix_:
+
+    push eax
+
+    mov al, '0'
+    call print_char_pm
+    mov al, 'x'
+    call print_char_pm
+
+    pop eax
+    call print_hex_pm
+
+    ret
+
+
+
+
+print_hex_pm:
+
+    pushad
+
+    mov ecx, 8              ; 8 dígitos hex (32 bits)
+
+.next:
+
+    mov ebx, eax
+    shr ebx, 28             ; pega nibble mais alto (4 bits)
+
+    cmp bl, 9
+    jbe .num
+
+    add bl, 'A' - 10
+    jmp .print
+
+.num:
+    add bl, '0'
+
+.print:
+    mov al, bl
+    call print_char_pm
+
+    shl eax, 4              ; próximo nibble
+    loop .next
+
+    popad
+    ret
+
+
+
+print_hex_pm_prefix:
+
+    pushad
+
+  ;  mov al, '0'
+   ; call print_char_pm
+   ; mov al, 'x'
+   ; call print_char_pm
+    mov ebx, eax        ; ✔ salva valor original
+
+    push ebx            ; ✔ empilha para usar na impressão
+
+    mov [teste], eax  ; ebx
+
+    mov al, '0'
+    call print_char_pm
+    mov al, 'x'
+    call print_char_pm
+
+    mov eax, ebx        ; ✔ restaura valor
+
+    mov eax, [teste]      ; ✔ ou pega direto da variável
+
+    pop ebx             ; ✔ desempilha para usar na impressão
+    mov eax, ebx        ; ✔ valor para impressão
+
+    mov ecx, 8            ; 8 dígitos hex (32 bits)
+
+.next:
+
+    mov ebx, eax ; ✔ usa EBX para manipular o valor sem alterar EAX
+    shr ebx, 28            ; pega nibble mais alto (4 bits)
+
+    cmp bl, 9  ; comparação deve ser feita com BL (parte baixa de BX)
+    jbe .num
+
+    add bl, 'A' - 10
+    jmp .print
+
+.num:
+    add bl, '0'
+
+.print:
+    mov al, bl
+    call print_char_pm
+
+    shl eax, 4
+    loop .next
+
+    popad
+    ret
+
+
+
 newline_pm:
     push esi               ; salva mensagem
     push eax
@@ -345,6 +484,8 @@ cursor_x dd 0
 cursor_y dd 0
 
 current_color db 0x07
+
+teste dd 0
 
 
 ; ================================
