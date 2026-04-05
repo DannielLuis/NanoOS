@@ -98,6 +98,13 @@ syscall_count equ ($ - syscall_table) / 4
 ; ===========================
 ; Implementação das syscalls
 ; ===========================
+
+; ===================================================
+; SYSCALL: sys_write
+; EBX = ponteiro string (null-terminated)
+; print string simples por enquanto
+; usando int 0x10 para evitar dependência de driver
+; ===================================================
 sys_write:
     ; ebx = ponteiro string
 
@@ -117,12 +124,19 @@ sys_write:
     ret
 
 
-
+; ===================================================
+; SYSCALL: sys_getpid
+; Retorna um PID fictício (exemplo)
+; ===================================================
 sys_getpid:
     mov eax, 1
     ret
 
 
+; ===================================================
+; SYSCALL: sys_exit
+; Termina o processo atual (ainda não implementado)
+; ===================================================
 sys_exit:
 .halt:
     cli
