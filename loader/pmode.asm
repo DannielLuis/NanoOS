@@ -25,8 +25,9 @@ protected_mode_start:
 
     cli     ; desabilitar interrupções antes de configurar a IDT
     
-    ;call load_idt
-    lidt [idt_descriptor]
+   ; call load_idt
+   ; lidt [idt_descriptor]
+    
     
     ;jmp $
 
@@ -61,11 +62,13 @@ protected_mode_start:
 
     ;jmp $
 
+    call idt_init
 
     ; Pular para o kernel em 0x10000 (carregado no real mode)
     ; 0x08 é o seletor de código do kernel na GDT
     jmp 0x08:0x10000    ; pular para o kernel em 0x10000 (carregado no real mode)
     ;jmp $
+     ;jmp 0x10000
 
     
 
